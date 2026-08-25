@@ -4,20 +4,10 @@
 #include "type.h"
 
 namespace cst {
-    enum class PROT_FLAGS : u8 {
-        NONE    = 0,
-        READ    = 1 << 0,
-        WRITE   = 1 << 1,
-        EXEC    = 1 << 2
-    };
-
-    enum class MMAP_RESULT : u8 {
-        SUCCESS,
-        ERROR,
-
-        // modify //
-        ERROR_MODIFY_FLAG_COMBINATION,
-    };
+    const u32 PROT_NONE = 0;
+    const u32 PROT_READ = 1 << 0;
+    const u32 PROT_WRITE = 1 << 1;
+    const u32 PROT_EXEC = 1 << 2;
 
     void *malloc(dint size);                                // OS-ALLOC
     void *calloc(dint type_size, dint size);                // OS-ALLOC
@@ -34,9 +24,9 @@ namespace cst {
         bool execute;
     };
     
-    void *mmap(dint size, u8 prot_flags = (u8)PROT_FLAGS::READ | (u8)PROT_FLAGS::WRITE);
-    MMAP_RESULT unmap(void *map, dint size);
-    MMAP_RESULT mmodify(void *ptr, dint size, u8 prot_flags);
+    void *mmap(dint size, u8 prot_flags = PROT_READ | PROT_WRITE);
+    bool unmap(void *map, dint size);
+    bool mmodify(void *ptr, dint size, u8 prot_flags);
 
     namespace memory_profiler {
         extern dint PEAK_MEMORY_USAGE;

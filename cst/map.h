@@ -7,8 +7,8 @@ namespace cst {
     struct map {
         list data;
 
-        map(dint key_size, dint value_size);
-        ~map();
+        void init(dint key_size, dint val_size);
+        void clear();
 
         void *get(void *key);
         dint insert(void *key, void *val);
