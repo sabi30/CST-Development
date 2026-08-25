@@ -112,12 +112,14 @@ void *cst::calloc(dint type_size, dint size) {
 }
 
 void *cst::crealloc(void* ptr, dint size) {
-
+    alloc_header *header = static_cast<alloc_header*>(ptr) - 1;
+    
 }
 
 void cst::cfree(void *ptr) {
-    alloc_header *header = static_cast<alloc_header*>(ptr);
-    map
+    alloc_header *header = static_cast<alloc_header*>(ptr) - 1;
+    maps_list[header->map].used--;
+    header->size = 0;
 }
 
 // PUBLIC

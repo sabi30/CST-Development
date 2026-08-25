@@ -8,45 +8,43 @@
     #include <errno.h>
 #endif
 
-namespace {
-    dint internal_get_page_size() {
-    #if defined(_WIN32) || defined(_WIN64)
-        SYSTEM_INFO sysInfo;
-        GetSystemInfo(&sysInfo);
-        return (dint)sysInfo.dwPageSize;
-    #else
-        return (dint)sysconf(_SC_PAGESIZE);
-    #endif
-    }
-
+static dint internal_get_page_size() {
 #if defined(_WIN32) || defined(_WIN64) // MICROSOFT WINDOWS SECTION
-    DWORD get_os_prot(u8 flags) {
-        bool r = (flags & cst::PROT_FLAGS::READ) != 0;
-        bool w = (flags & cst::PROT_FLAGS::WRITE) != 0;
-        bool x = (flags & cst::PROT_FLAGS::EXEC) != 0;
-
-        if (x) {
-            if (r && w) return PAGE_EXECUTE_READWRITE;
-            if (r) return PAGE_EXECUTE_READ;
-            if (w) return PAGE_EXECUTE_WRITECOPY;
-            return PAGE_EXECUTE;
-        } else {
-            if (r && w) return PAGE_READWRITE;
-            if (r) return PAGE_READONLY;
-            if (w) return PAGE_WRITECOPY;
-            return PAGE_NOACCESS;
-        }
-    }
+    SYSTEM_INFO sysInfo;
+    GetSystemInfo(&sysInfo);
+    return (dint)sysInfo.dwPageSize;
 #else // UNIX POSIX SECTION
-    int get_os_prot(u8 flags) {
-        int prot = PROT_NONE;
-        if (flags & (u8)cst::PROT_FLAGS::READ) prot |= PROT_READ;
-        if (flags & (u8)cst::PROT_FLAGS::WRITE) prot |= PROT_WRITE;
-        if (flags & (u8)cst::PROT_FLAGS::EXEC) prot |= PROT_EXEC;
-        return prot;
-    }
+    return (dint)sysconf(_SC_PAGESIZE);
 #endif
 }
+
+#if defined(_WIN32) || defined(_WIN64) // MICROSOFT WINDOWS SECTION
+static DWORD get_os_prot(u8 flags) {
+    bool r = (flags & cst::PROT_READ) != 0;
+    bool w = (flags & cst::PROT_FLAGS::WRITE) != 0;
+    bool x = (flags & cst::PROT_FLAGS::EXEC) != 0;
+
+    if (x) {
+        if (r && w) return PAGE_EXECUTE_READWRITE;
+        if (r) return PAGE_EXECUTE_READ;
+        if (w) return PAGE_EXECUTE_WRITECOPY;
+        return PAGE_EXECUTE;
+    } else {
+        if (r && w) return PAGE_READWRITE;
+        if (r) return PAGE_READONLY;
+        if (w) return PAGE_WRITECOPY;
+        return PAGE_NOACCESS;
+    }
+}
+#else // UNIX POSIX SECTION
+static int get_os_prot(u8 flags) {
+    int prot = PROT_NONE;
+    if (flags & cst::PROT::READ) prot |= PROT_READ;
+    if (flags & cst::PROT::WRITE) prot |= PROT_WRITE;
+    if (flags & cst::PROT::EXEC) prot |= PROT_EXEC;
+    return prot;
+}
+#endif
 
 void* cst::mmap(dint size, u8 prot_flags) {
     if (size == 0) return nullptr;
@@ -75,8 +73,8 @@ void* cst::mmap(dint size, u8 prot_flags) {
     return ptr;
 }
 
-cst::MMAP_RESULT cst::unmap(void* map, dint size) {
-    if (!map || size == 0) return MMAP_RESULT::ERROR;
+u32 cst::unmap(void* map, dint size) {
+    if (!map || size == 0) return 1;
 
     dint page_sz = internal_get_page_size();
     dint aligned_size = size;
@@ -94,14 +92,14 @@ cst::MMAP_RESULT cst::unmap(void* map, dint size) {
 
     if (success) {
         cst::memory_profiler::freed(aligned_size);
-        return MMAP_RESULT::SUCCESS;
+        return 0;
     }
     
-    return MMAP_RESULT::ERROR;
+    return 1;
 }
 
-cst::MMAP_RESULT cst::mmodify(void* ptr, dint size, u8 prot_flags) {
-    if (!ptr || size == 0) return MMAP_RESULT::ERROR;
+u32 cst::mmodify(void* ptr, dint size, u8 prot_flags) {
+    if (!ptr || size == 0) return 1;
 
     dint page_sz = internal_get_page_size();
     dint aligned_size = size;
@@ -121,11 +119,11 @@ cst::MMAP_RESULT cst::mmodify(void* ptr, dint size, u8 prot_flags) {
 #else
     if (::mprotect(ptr, aligned_size, get_os_prot(prot_flags)) != 0) {
         if (errno == EACCES || errno == EINVAL) {
-            return MMAP_RESULT::ERROR_MODIFY_FLAG_COMBINATION;
+            return 2;
         }
-        return MMAP_RESULT::ERROR;
+        return 1;
     }
 #endif
 
-    return MMAP_RESULT::SUCCESS;
+    return 0;
 }

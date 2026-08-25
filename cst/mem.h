@@ -4,10 +4,12 @@
 #include "type.h"
 
 namespace cst {
-    const u32 PROT_NONE = 0;
-    const u32 PROT_READ = 1 << 0;
-    const u32 PROT_WRITE = 1 << 1;
-    const u32 PROT_EXEC = 1 << 2;
+    enum PROT : u32 {
+         NONE = 0,
+         READ = 1 << 0,
+         WRITE = 1 << 1,
+         EXEC = 1 << 2,  
+    };
 
     void *malloc(dint size);                                // OS-ALLOC
     void *calloc(dint type_size, dint size);                // OS-ALLOC
@@ -24,9 +26,9 @@ namespace cst {
         bool execute;
     };
     
-    void *mmap(dint size, u8 prot_flags = PROT_READ | PROT_WRITE);
-    bool unmap(void *map, dint size);
-    bool mmodify(void *ptr, dint size, u8 prot_flags);
+    void *mmap(dint size, u8 prot_flags = PROT::READ | PROT::WRITE);
+    u32 unmap(void *map, dint size);
+    u32 mmodify(void *ptr, dint size, u8 prot_flags);
 
     namespace memory_profiler {
         extern dint PEAK_MEMORY_USAGE;
