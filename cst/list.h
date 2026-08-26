@@ -11,7 +11,7 @@ namespace cst {
         dint val_size = 0;
 
         void init(dint);
-        void clear();
+        void clear(void);
 
         void copy(const list& other);
         void move(list&& other) noexcept;
@@ -22,8 +22,8 @@ namespace cst {
         void insert_first(const void *val);
         void remove_first(const dint key);
 
-        void *begin();
-        void *end();
+        void *begin(void);
+        void *end(void);
     
         void *operator[](dint key);
         const void *operator[](dint) const;

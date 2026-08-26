@@ -1,9 +1,9 @@
 #pragma once
 
 namespace cst {
-    void exit();
-    void abort();
+    void exit(void);
+    void abort(void);
 
     const char *get_env(const char*);
-    unsigned int get_pid();
+    unsigned int get_pid(void);
 }

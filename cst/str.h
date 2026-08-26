@@ -12,23 +12,23 @@ namespace cst {
         char *c_str = nullptr;
         dint size = 0;
 
-        string() : c_str(nullptr), size(0) {};
+        string(void) : c_str(nullptr), size(0) {};
         string(const char* s);
         string(const string& other);
         string(string&& other) noexcept;
-        ~string();
+        ~string(void);
     
         string& operator=(const string& copy_string);
         string& operator=(string&& other) noexcept;
         string& operator=(const char *copy_cstr);
     
-        bool empty() const;
-        dint length() const;
+        bool empty(void) const;
+        dint length(void) const;
         char& operator[](dint index);
         const char& operator[](dint index) const;
         const char* data() const;
     
-        void clear();
+        void clear(void);
         void add_cstr(const char *copy);
     
         string& operator+=(const char *copy_cstr);

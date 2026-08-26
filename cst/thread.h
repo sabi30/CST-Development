@@ -10,5 +10,5 @@ namespace cst {
     void *join_thread(thread_t);
     bool detach_thread(thread_t);
 
-    unsigned int get_tid();
+    unsigned int get_tid(void);
 }

@@ -24,7 +24,7 @@ cst::string::string(string&& other) noexcept : c_str(other.c_str), size(other.si
     other.size = 0;
 }
 
-cst::string::~string() {
+cst::string::~string(void) {
     clear();
 }
 
@@ -63,11 +63,11 @@ cst::string& cst::string::operator=(const char *copy_cstr) {
     return *this;
 }
 
-bool cst::string::empty() const {
+bool cst::string::empty(void) const {
     return size == 0;
 }
 
-dint cst::string::length() const {
+dint cst::string::length(void) const {
     return size;
 }
 
@@ -79,11 +79,11 @@ const char& cst::string::operator[](dint index) const {
     return c_str[index];
 }
 
-const char* cst::string::data() const {
+const char* cst::string::data(void) const {
     return c_str ? c_str : "";
 }
 
-void cst::string::clear() {
+void cst::string::clear(void) {
     if (c_str) {
         free(c_str);
         c_str = nullptr;

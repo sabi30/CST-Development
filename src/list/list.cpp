@@ -119,11 +119,11 @@ cst::list& cst::list::operator<<(const list& other) {
     return *this;
 }
 
-void *cst::list::begin() {
+void *cst::list::begin(void) {
     return ptr;
 }
 
-void *cst::list::end() {
+void *cst::list::end(void) {
     if (size <= 0) {
         return ptr;
     }
@@ -137,7 +137,7 @@ void cst::list::init(dint s) {
     val_size = s;
 }
 
-void cst::list::clear() {
+void cst::list::clear(void) {
     if (ptr) free(ptr);
     size = 0;
     capacity = 0;

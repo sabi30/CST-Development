@@ -2,7 +2,9 @@
 #include <unistd.h>
 #include <stdio.h>
 
-int getrandom(void) {
+#include "rand.h"
+
+i32 cst::get_random_linux(void) {
     int fd = open("/dev/urandom", O_RDONLY);
     if (fd < 0) {
         fd = open("/dev/random", O_RDONLY);

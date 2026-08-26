@@ -45,8 +45,8 @@ bool cst::memeq(const void *cmp1, const void *cmp2, const dint size) {
         __builtin_memcpy(&v1, p1, 16);
         __builtin_memcpy(&v2, p2, 16);
 
-        simd::u8x16 diff = (cst::simd::u8x16)(v1 != v2);
-        simd::i64x2 mask = (simd::i64x2)diff;
+        simd::u8x16 diff = reinterpret_cast<cst::simd::u8x16>(v1 != v2);
+        simd::i64x2 mask = reinterpret_cast<simd::i64x2>(diff);
 
         if (mask[0] | mask[1]) return false; 
 
@@ -87,8 +87,8 @@ bool cst::memcmp(const void *cmp1, const void *cmp2, const dint size) {
         __builtin_memcpy(&v1, p1, 16);
         __builtin_memcpy(&v2, p2, 16);
 
-        simd::u8x16 diff = (cst::simd::u8x16)(v1 != v2);
-        simd::i64x2 mask = (simd::i64x2)diff;
+        simd::u8x16 diff = reinterpret_cast<cst::simd::u8x16>(v1 != v2);
+        simd::i64x2 mask = reinterpret_cast<simd::i64x2>(diff);
 
         if (mask[0] | mask[1]) {
             for (int i = 0; i < 16; ++i) {
